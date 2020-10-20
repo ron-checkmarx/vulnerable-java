@@ -18,6 +18,8 @@ import org.apache.http.protocol.HttpProcessorBuilder;
 import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.impl.DefaultBHttpClientConnection;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.http.client.entity.GzipDecompressingEntity;
+import org.apache.http.HttpEntity;
 
 public class Vulnerable {
 
@@ -56,6 +58,9 @@ public class Vulnerable {
                 httpexecutor.preProcess(request, httpproc, coreContext);
                 HttpResponse response = httpexecutor.execute(request, conn, coreContext);
                 httpexecutor.postProcess(response, httpproc, coreContext);
+
+                HttpEntity entity = new GzipDecompressingEntity(response.getEntity());
+                System.out.println(entity.getContentLength());
 
                 System.out.println("<< Response: " + response.getStatusLine());
                 System.out.println(EntityUtils.toString(response.getEntity()));
