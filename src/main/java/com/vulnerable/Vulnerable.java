@@ -20,6 +20,7 @@ import org.apache.http.impl.DefaultBHttpClientConnection;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.client.entity.GzipDecompressingEntity;
 import org.apache.http.HttpEntity;
+import org.json.JSONException;
 
 public class Vulnerable {
 
@@ -62,9 +63,16 @@ public class Vulnerable {
                 HttpEntity entity = new GzipDecompressingEntity(response.getEntity());
                 System.out.println(entity.getContentLength());
 
-                System.out.println("<< Response: " + response.getStatusLine());
-                System.out.println(EntityUtils.toString(response.getEntity()));
-                System.out.println("==============");
+                try {
+                    System.out.println("<< Response: " + response.getStatusLine());
+                    System.out.println(EntityUtils.toString(response.getEntity()));
+                    System.out.println("==============");
+                }
+                catch (JSONException jsonException) {
+                    System.out.println("Unable to parse configuration:" + jsonException.getCause());
+                    return null;
+                }
+                
                 if (!connStrategy.keepAlive(response, coreContext)) {
                     conn.close();
                 } else {
